@@ -125,72 +125,73 @@ function App() {
         <p>Comparison of DE Models across Various Fitness Functions, Crossover Methods, and Selection Strategies</p>
       </header>
       
-      <CrossoverNavigation 
-        activeCrossover={activeCrossover}
-        onCrossoverChange={handleCrossoverChange}
-      />
-      
       <main className="dashboard-content">
+        {/* Minimalist Chart Controls - Top Right */}
+        <div className="chart-controls-minimal">
+          {/* Crossover Selection */}
+          <div className="control-group">
+            <CrossoverNavigation 
+              activeCrossover={activeCrossover}
+              onCrossoverChange={handleCrossoverChange}
+            />
+          </div>
+          {/* Chart Type Toggle */}
+          <div className="control-group">
+            <button
+              className={`control-btn ${chartType === 'bar' ? 'active' : ''}`}
+              onClick={() => handleChartTypeChange('bar')}
+              title="Bar Chart"
+            >
+              📊
+            </button>
+            <button
+              className={`control-btn ${chartType === 'line' ? 'active' : ''}`}
+              onClick={() => handleChartTypeChange('line')}
+              title="Line Chart"
+            >
+              📈
+            </button>
+          </div>
+
+          {/* Selection Toggles */}
+          <div className="control-group">
+            <button
+              className={`control-btn ${showSTS ? 'active sts' : ''}`}
+              onClick={handleToggleSTS}
+              title="Toggle STS Selection"
+            >
+              STS
+            </button>
+            <button
+              className={`control-btn ${showGreedy ? 'active greedy' : ''}`}
+              onClick={handleToggleGreedy}
+              title="Toggle Greedy Selection"
+            >
+              GRD
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
         {hasData ? (
-          <>
-            {/* Minimalist Chart Controls - Top Right */}
-            <div className="chart-controls-minimal">
-              {/* Chart Type Toggle */}
-              <div className="control-group">
-                <button
-                  className={`control-btn ${chartType === 'bar' ? 'active' : ''}`}
-                  onClick={() => handleChartTypeChange('bar')}
-                  title="Bar Chart"
-                >
-                  📊
-                </button>
-                <button
-                  className={`control-btn ${chartType === 'line' ? 'active' : ''}`}
-                  onClick={() => handleChartTypeChange('line')}
-                  title="Line Chart"
-                >
-                  📈
-                </button>
+          <div className="charts-grid">
+            {Object.entries(filteredData).map(([functionName, functionData]) => (
+              <div key={`${functionName}-${activeCrossover}-${showSTS}-${showGreedy}-${chartType}`} className="chart-item">
+                <FitnessChart 
+                  functionData={functionData} 
+                  crossoverMethod={activeCrossover}
+                  showSTS={showSTS}
+                  showGreedy={showGreedy}
+                  chartType={chartType}
+                />
               </div>
-
-              {/* Selection Toggles */}
-              <div className="control-group">
-                <button
-                  className={`control-btn ${showSTS ? 'active sts' : ''}`}
-                  onClick={handleToggleSTS}
-                  title="Toggle STS Selection"
-                >
-                  STS
-                </button>
-                <button
-                  className={`control-btn ${showGreedy ? 'active greedy' : ''}`}
-                  onClick={handleToggleGreedy}
-                  title="Toggle Greedy Selection"
-                >
-                  GRD
-                </button>
-              </div>
-            </div>
-
-            {/* Charts Grid */}
-            <div className="charts-grid">
-              {Object.entries(filteredData).map(([functionName, functionData]) => (
-                <div key={`${functionName}-${activeCrossover}-${showSTS}-${showGreedy}-${chartType}`} className="chart-item">
-                  <FitnessChart 
-                    functionData={functionData} 
-                    crossoverMethod={activeCrossover}
-                    showSTS={showSTS}
-                    showGreedy={showGreedy}
-                    chartType={chartType}
-                  />
-                </div>
-              ))}
-            </div>
-          </>
+            ))}
+          </div>
         ) : (
           <div className="no-data-message">
             <div className="no-data-content">
-              <h3>No Data Available</h3>
+              <h3>No Data</h3>
+              <p>Insert data</p>
             </div>
           </div>
         )}
